@@ -53,3 +53,44 @@ class SumoNetGenerator:
 
     def calculate_junction_y(self):
         return round(self.LANE_WIDTH * self.number_of_lanes * 100) / 100
+
+
+class SumoRowGenerator:
+    def __init__(self, maxSpeed, vehcle_per_hour, begin, end, edge):
+        self.maxSpeed = maxSpeed
+        self.vehcle_per_hour = vehcle_per_hour
+        self.begin = begin
+        self.end = end
+        self.current_path = os.path.dirname(os.path.abspath(__file__))
+        self.output_path = os.path.join(self.current_path, "../../simuration_config")
+        self.rou_file = "rou.rou.xml"
+        self.edge = edge
+
+    def generate_rou_file(self):
+        root = ET.Element("routes")
+        self.set_v_type(root)
+        self.add_flow(root)
+        self.write_rou_file(root)
+
+    def set_v_type(self, root):
+        v_type = ET.SubElement(root, "vType")
+        v_type.set("id", "Car")
+        v_type.set("length", "5.0")
+        v_type.set("maxSpeed", str(self.maxSpeed))
+        v_type.set("vClass", "passenger")
+
+    def add_flow(self, root):
+        flow = ET.SubElement(root, "flow")
+        flow.set("id", "flow")
+        flow.set("type", "Car")
+        flow.set("begin", str(self.begin))
+        flow.set("end", str(self.end))
+        flow.set("vehsPerHour", str(self.vehcle_per_hour))
+        ET.SubElement(flow, "route", edges=self.edge)
+
+    def write_rou_file(self, root):
+        tree = ET.ElementTree(root)
+        output_path = os.path.join(self.output_path, self.rou_file)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        tree.write(output_path, encoding="utf-8", xml_declaration=True)
+
