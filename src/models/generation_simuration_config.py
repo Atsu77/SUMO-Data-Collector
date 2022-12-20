@@ -144,8 +144,7 @@ class SumocfgGenerator:
     def set_output(self, root):
         output = ET.SubElement(root, "output")
         fcd_output = ET.SubElement(output, "fcd-output")
-        data_output_path = os.path.join(self.data_output_path, "fcd.xml")
-        fcd_output.set("value", f"{str(data_output_path)}")
+        fcd_output.set("value", f"../data/fcd.xml")
         fcd_output_acceleration = ET.SubElement(output, "fcd-output.acceleration")
         fcd_output_acceleration.set("value", "true")
 
@@ -155,3 +154,7 @@ class SumocfgGenerator:
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         tree.write(output_path, encoding="utf-8", xml_declaration=True)
 
+
+if __name__ == '__main__':
+    conf_generator = SumocfgGenerator("net.net.xml", "rou.rou.xml", "0", "3600", "0.1")
+    conf_generator.generate_conf_file()
