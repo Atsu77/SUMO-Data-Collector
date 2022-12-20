@@ -9,7 +9,7 @@ class SumoNetGenerator:
         self.number_of_lanes = number_of_lanes
         self.road_length = road_length
         self.current_path = os.path.dirname(os.path.abspath(__file__))
-        self.output_path = os.path.join(self.current_path, "../../simuration_config")
+        self.output_path = os.path.join(self.current_path, "../../simulation")
         self.net_file = "net.net.xml"
 
     def generate_net_file(self):
@@ -25,8 +25,19 @@ class SumoNetGenerator:
         root.set("xsi:noNamespaceSchemaLocation", "http://sumo.dlr.de/xsd/net_file.xsd")
 
     def add_junctions(self, root):
-        ET.SubElement(root, "junction", id="J0", type="dead_end", x="0.0", y="0.0", shape=f"0.0,0.0 0.0,{self.calculate_junction_y()}")
-        ET.SubElement(root, "junction", id="J1", type="dead_end", x=f"{self.road_length}", y="0.0", shape=f"{self.road_length},{self.calculate_junction_y()} {self.road_length},0.0")
+        juction_0 = ET.SubElement(root, "junction")
+        juction_0.set("id", "J0")
+        juction_0.set("type", "dead_end")
+        juction_0.set("x", "0.0")
+        juction_0.set("y", "0.0")
+        juction_0.set("shape", f"0.0,0.0 0.0,{self.calculate_junction_y()}")
+        juction_1 = ET.SubElement(root, "junction")
+        juction_1.set("id", "J1")
+        juction_1.set("type", "dead_end")
+        juction_1.set("x", f"{self.road_length}")
+        juction_1.set("y", "0.0")
+        juction_1.set("shape", f"0.0,0.0 0.0,{self.calculate_junction_y()}")
+
 
     def add_edges(self, root):
         edge = ET.SubElement(root, "edge")
@@ -34,7 +45,13 @@ class SumoNetGenerator:
         edge.set("from", "J0")
         edge.set("to", "J1")
         edge.set("priority", "1")
-        lane = ET.SubElement(edge, "lane", id="E0_0", index="0", length=str(self.road_length), speed="13.89", shape=f"0.0,{self.calculate_lane_y(0)} {self.road_length},{self.calculate_lane_y(0)}")
+
+        lane = ET.SubElement(edge, "lane")
+        lane.set("id", "E0_0")
+        lane.set("index", "0")
+        lane.set("length", str(self.road_length))
+        lane.set("speed", "13.89")
+        lane.set("shape", f"0.0,{self.calculate_lane_y(0)} {self.road_length},{self.calculate_lane_y(0)}")
 
         for i in range(1, self.number_of_lanes):
             lane = ET.SubElement(edge, "lane", id=f"E0_{i}", index=str(i))
@@ -62,7 +79,7 @@ class SumoRowGenerator:
         self.begin = begin
         self.end = end
         self.current_path = os.path.dirname(os.path.abspath(__file__))
-        self.output_path = os.path.join(self.current_path, "../../simuration_config")
+        self.output_path = os.path.join(self.current_path, "../../simulation")
         self.rou_file = "rou.rou.xml"
         self.edge = edge
 
@@ -91,6 +108,50 @@ class SumoRowGenerator:
     def write_rou_file(self, root):
         tree = ET.ElementTree(root)
         output_path = os.path.join(self.output_path, self.rou_file)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        tree.write(output_path, encoding="utf-8", xml_declaration=True)
+
+class SumocfgGenerator:
+    def __init__(self, net_file, rou_file, begin, end, step_length):
+        self.net_file = net_file
+        self.rou_file = rou_file
+        self.begin = begin
+        self.end = end
+        self.step_length = step_length
+        self.current_path = os.path.dirname(os.path.abspath(__file__))
+        self.output_path = os.path.join(self.current_path, "../../simulation")
+        self.data_output_path = os.path.join(self.current_path, "data")
+        self.conf_file = "sumocfg"
+
+    def generate_conf_file(self):
+        root = ET.Element("configuration")
+        self.set_input(root)
+        self.set_time(root)
+        self.set_output(root)
+        self.write_conf_file(root)
+
+    def set_input(self, root):
+        input = ET.SubElement(root, "input")
+        ET.SubElement(input, "net-file", value=self.net_file)
+        ET.SubElement(input, "route-files", value=self.rou_file)
+
+    def set_time(self, root):
+        time = ET.SubElement(root, "time")
+        time.set("begin", self.begin)
+        time.set("end", self.end)
+        time.set("step-length", self.step_length)
+
+    def set_output(self, root):
+        output = ET.SubElement(root, "output")
+        fcd_output = ET.SubElement(output, "fcd-output")
+        data_output_path = os.path.join(self.data_output_path, "fcd.xml")
+        fcd_output.set("value", f"{str(data_output_path)}")
+        fcd_output_acceleration = ET.SubElement(output, "fcd-output.acceleration")
+        fcd_output_acceleration.set("value", "true")
+
+    def write_conf_file(self, root):
+        tree = ET.ElementTree(root)
+        output_path = os.path.join(self.output_path, self.conf_file)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         tree.write(output_path, encoding="utf-8", xml_declaration=True)
 
