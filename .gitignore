@@ -326,4 +326,5 @@ poetry.toml
 
 # End of https://www.toptal.com/developers/gitignore/api/node,python,visualstudiocode
 
-*.xml
+simuration/
+src/models/data/
