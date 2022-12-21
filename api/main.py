@@ -1,14 +1,21 @@
 import os
-import subprocess
 
 from fastapi import FastAPI, Response
 
 from models.generation_simuration_config import SumoNetGenerator
 from models.generation_simuration_config import SumoRowGenerator
 from models.generation_simuration_config import SumocfgGenerator
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root_page():
