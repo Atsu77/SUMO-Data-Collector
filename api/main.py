@@ -3,9 +3,9 @@ import subprocess
 
 from fastapi import FastAPI, Response
 
-from api.models.generation_simuration_config import SumoNetGenerator
-from api.models.generation_simuration_config import SumoRowGenerator
-from api.models.generation_simuration_config import SumocfgGenerator
+from models.generation_simuration_config import SumoNetGenerator
+from models.generation_simuration_config import SumoRowGenerator
+from models.generation_simuration_config import SumocfgGenerator
 
 
 app = FastAPI()

@@ -1,0 +1,27 @@
+#vueとfastapiのdocker-compose.ymlを構築する
+version: '3.7'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    environment:
+      - API_URL=http://fastapi:8000
+    ports:
+      - 8080:8080
+    volumes:
+      - ./frontend:/app
+    tty: true
+    stdin_open: true
+    depends_on:
+      - fastapi
+
+  fastapi:
+    build: ./api
+    container_name: fastapi
+    ports:
+      - 8000:8000
+    volumes:
+      - ./api:/app
+    tty: true
+    stdin_open: true
