@@ -9,10 +9,8 @@ RUN pip install fastapi uvicorn
 
 ENV SUMO_HOME /usr/share/sumo
 
-COPY static/ /app/static
-COPY api/ /app/api
-
 WORKDIR /app
+COPY ./ /app
 
 EXPOSE 8000
-ENTRYPOINT ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
