@@ -38,7 +38,6 @@ class TestMain(unittest.TestCase):
             "step_length": "0.1",
         }
         response = requests.get(self.URL + '/sumocfg/create', params=params)
-        print(response.json())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"message": "Sumocfg file created"})
 

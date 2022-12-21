@@ -48,4 +48,3 @@ def simulation_start():
     except Exception as e:
         return {"message": f"An error occurred: {e}"}
 
-
