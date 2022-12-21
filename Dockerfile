@@ -7,10 +7,12 @@ RUN apt-get install -y sumo sumo-tools sumo-doc
 
 RUN pip install fastapi uvicorn
 
+ENV SUMO_HOME /usr/share/sumo
+
 COPY static/ /app/static
-COPY src/ /app/src
+COPY api/ /app/api
 
 WORKDIR /app
 
 EXPOSE 8000
-ENTRYPOINT ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+ENTRYPOINT ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
