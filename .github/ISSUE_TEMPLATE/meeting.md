@@ -1,5 +1,5 @@
 ---
-name: 朝会用のテンプレート
+name: meeting
 about: 朝会用のテンプレートです
 title: ''
 labels: ''
