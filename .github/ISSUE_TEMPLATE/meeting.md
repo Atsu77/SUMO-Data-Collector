@@ -1,7 +1,7 @@
 ---
 name: meeting
 about: 朝会用のテンプレートです
-title: ''
+title: "[230901 朝会]"
 labels: ''
 assignees: ''
 
